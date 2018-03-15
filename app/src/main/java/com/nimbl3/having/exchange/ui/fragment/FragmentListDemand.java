@@ -53,8 +53,12 @@ public class FragmentListDemand extends FragmentBase {
         return view;
     }
 
-    private void initData() {
-        if (((ActivityHome) getActivity()).isDemandOwner()) {
+    protected boolean isShouldShowDemand() {
+        return ((ActivityHome) getActivity()).isDemandOwner();
+    }
+
+    protected void initData() {
+        if (isShouldShowDemand()) {
             showDemands();
             setDemandsData();
         } else {
@@ -62,19 +66,19 @@ public class FragmentListDemand extends FragmentBase {
         }
     }
 
-    private void setDemandsData() {
+    protected void setDemandsData() {
         Demands demands = new Demands("I need a private English class",
             "The class have maximum two students, price is 1000bath per lesson");
         mTvTitle.setText(demands.title);
         mTvDetail.setText(demands.description);
     }
 
-    private void hideDemands() {
+    protected void hideDemands() {
         mDemandCard.setVisibility(View.GONE);
         mTvEmpty.setVisibility(View.VISIBLE);
     }
 
-    private void showDemands() {
+    protected void showDemands() {
         mDemandCard.setVisibility(View.VISIBLE);
         mTvEmpty.setVisibility(View.GONE);
     }
