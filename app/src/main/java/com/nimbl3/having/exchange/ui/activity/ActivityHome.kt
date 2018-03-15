@@ -10,6 +10,7 @@ import android.view.*
 import com.nimbl3.having.exchange.R
 import com.nimbl3.having.exchange.ui.dialog.DialogEnterName
 import com.nimbl3.having.exchange.ui.fragment.FragmentListDemand
+import com.nimbl3.having.exchange.ui.fragment.FragmentListSupply
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.fragment_main2.view.*
 
@@ -95,7 +96,7 @@ class ActivityHome : ActivityBase() {
             if (position == 0) {
                 return FragmentListDemand.newInstance();
             }
-            return PlaceholderFragment.newInstance(position + 1)
+            return FragmentListSupply.newInstance()
         }
 
         override fun getCount(): Int {
