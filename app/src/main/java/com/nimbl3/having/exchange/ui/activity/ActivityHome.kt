@@ -1,5 +1,6 @@
 package com.nimbl3.having.exchange.ui.activity
 
+import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -7,6 +8,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.view.*
 import com.nimbl3.having.exchange.R
+import com.nimbl3.having.exchange.ui.dialog.DialogEnterName
 import com.nimbl3.having.exchange.ui.fragment.FragmentListDemand
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.fragment_main2.view.*
@@ -20,7 +22,10 @@ class ActivityHome : ActivityBase() {
      * loaded fragment in memory. If this becomes too memory intensive, it
      * may be best to switch to a
      * [android.support.v4.app.FragmentStatePagerAdapter].
+     *
      */
+
+    private var mUserId = 0
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +48,16 @@ class ActivityHome : ActivityBase() {
                     .setAction("Action", null).show()
         }
 
+        initUser();
+    }
+
+    private fun initUser() {
+        // fetch user id from firebase instead user input
+        val sharedPreferences = this.getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE)
+        val user = sharedPreferences.getString("id", "0");
+        if (!user.equals("0")) {
+            mUserId = 1;
+        }
     }
 
 
@@ -59,6 +74,8 @@ class ActivityHome : ActivityBase() {
         val id = item.itemId
 
         if (id == R.id.action_settings) {
+            val dialogEnterName = DialogEnterName.newInstance();
+            dialogEnterName.show(fragmentManager, "enter name");
             return true
         }
 
@@ -75,14 +92,14 @@ class ActivityHome : ActivityBase() {
         override fun getItem(position: Int): Fragment {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            if(position == 0){
+            if (position == 0) {
                 return FragmentListDemand.newInstance();
             }
             return PlaceholderFragment.newInstance(position + 1)
         }
 
         override fun getCount(): Int {
-            // Show 3 total pages.
+            // Show 2 total pages.
             return 2
         }
 
@@ -126,5 +143,9 @@ class ActivityHome : ActivityBase() {
                 return fragment
             }
         }
+    }
+
+    fun isDemandOwner(): Boolean {
+        return mUserId == 0;
     }
 }
