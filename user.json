@@ -1,0 +1,11 @@
+{
+  "demands": [
+    {
+      "id": 2,
+      "owner_id":3,
+      "name": "Need a house in Bangkok",
+      "description":"I need to buy a house in Asoke, Bangkok, total around 100M bath",
+      "image_url": "https://scontent.fbkk14-1.fna.fbcdn.net/v/t1.0-9/25152269_1385332861576808_9156092279591119817_n.png?_nc_eui2=v1%3AAeHOfOV4QKd83aI-HXngNvCIwFVv-XOZPx1xeAbLD5EFp2cjwNeEJdpESOiTXH2WnqLVeoU98Ir_ijdbhvXFEtWBZ__HveQgwAHD4AIpqeAUDw&oh=93019a2cfc47ae76911bfc344315e984&oe=5B464295"
+    }
+  ]
+}
