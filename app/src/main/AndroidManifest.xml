@@ -27,8 +27,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login"></activity>
+            android:name=".ui.activity.ActivityDemandDetail"
+            android:label="@string/title_activity_demand_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.activity.ActivityChat"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
     </application>
 
 </manifest>
