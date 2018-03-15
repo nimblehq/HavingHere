@@ -5,9 +5,9 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import android.support.v7.app.AppCompatActivity
 import android.view.*
 import com.nimbl3.having.exchange.R
+import com.nimbl3.having.exchange.ui.fragment.FragmentListDemand
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.fragment_main2.view.*
 
@@ -75,6 +75,9 @@ class ActivityHome : ActivityBase() {
         override fun getItem(position: Int): Fragment {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
+            if(position == 0){
+                return FragmentListDemand.newInstance();
+            }
             return PlaceholderFragment.newInstance(position + 1)
         }
 
