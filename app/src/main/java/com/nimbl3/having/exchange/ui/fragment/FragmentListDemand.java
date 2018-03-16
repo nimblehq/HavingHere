@@ -9,19 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.nimbl3.having.exchange.R;
 import com.nimbl3.having.exchange.ui.activity.ActivityDemandDetail;
-import com.nimbl3.having.exchange.ui.activity.ActivityHome;
+import com.nimbl3.having.exchange.ui.database.FirebaseDatabaseHelper;
 import com.nimbl3.having.exchange.ui.model.Demands;
-
-/**
- * Created by thuypham on 3/15/2018 AD.
- */
 
 public class FragmentListDemand extends FragmentBase {
     private CardView mDemandCard;
@@ -54,7 +45,7 @@ public class FragmentListDemand extends FragmentBase {
     }
 
     protected boolean isShouldShowDemand() {
-        return ((ActivityHome) getActivity()).isDemandOwner();
+        return FirebaseDatabaseHelper.getInstance(getContext()).getUser(getContext()) == 0;
     }
 
     protected void initData() {
@@ -62,7 +53,7 @@ public class FragmentListDemand extends FragmentBase {
             showDemands();
             setDemandsData();
         } else {
-            hideDemands();
+            showEmptyState();
         }
     }
 
@@ -73,7 +64,7 @@ public class FragmentListDemand extends FragmentBase {
         mTvDetail.setText(demands.description);
     }
 
-    protected void hideDemands() {
+    protected void showEmptyState() {
         mDemandCard.setVisibility(View.GONE);
         mTvEmpty.setVisibility(View.VISIBLE);
     }
@@ -82,24 +73,4 @@ public class FragmentListDemand extends FragmentBase {
         mDemandCard.setVisibility(View.VISIBLE);
         mTvEmpty.setVisibility(View.GONE);
     }
-
-    //todo
-    private void initDatabase() {
-        // Write a message to the database
-        // Fetch list supply, demand
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("users");
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
 }

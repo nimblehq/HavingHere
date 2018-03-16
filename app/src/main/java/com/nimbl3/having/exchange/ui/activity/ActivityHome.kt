@@ -1,32 +1,19 @@
 package com.nimbl3.having.exchange.ui.activity
 
-import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
 import com.nimbl3.having.exchange.R
 import com.nimbl3.having.exchange.ui.dialog.DialogEnterName
 import com.nimbl3.having.exchange.ui.fragment.FragmentListDemand
 import com.nimbl3.having.exchange.ui.fragment.FragmentListSupply
 import kotlinx.android.synthetic.main.activity_main2.*
-import kotlinx.android.synthetic.main.fragment_main2.view.*
 
 class ActivityHome : ActivityBase() {
-
-    /**
-     * The [android.support.v4.view.PagerAdapter] that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * [android.support.v4.app.FragmentStatePagerAdapter].
-     *
-     */
-
-    private var mUserId = 0
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,12 +22,8 @@ class ActivityHome : ActivityBase() {
 
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
 
-        // Set up the ViewPager with the sections adapter.
         container.adapter = mSectionsPagerAdapter
         tabs.setupWithViewPager(container)
 
@@ -49,29 +32,14 @@ class ActivityHome : ActivityBase() {
                     .setAction("Action", null).show()
         }
 
-        initUser();
     }
-
-    private fun initUser() {
-        // fetch user id from firebase instead user input
-        val sharedPreferences = this.getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE)
-        val user = sharedPreferences.getString("id", "0");
-        if (!user.equals("0")) {
-            mUserId = 1;
-        }
-    }
-
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main2, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         val id = item.itemId
 
         if (id == R.id.action_settings) {
@@ -84,15 +52,9 @@ class ActivityHome : ActivityBase() {
     }
 
 
-    /**
-     * A [FragmentPagerAdapter] that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
         override fun getItem(position: Int): Fragment {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
             if (position == 0) {
                 return FragmentListDemand.newInstance();
             }
@@ -100,7 +62,6 @@ class ActivityHome : ActivityBase() {
         }
 
         override fun getCount(): Int {
-            // Show 2 total pages.
             return 2
         }
 
@@ -111,42 +72,5 @@ class ActivityHome : ActivityBase() {
                 return "Supply"
             }
         }
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    class PlaceholderFragment : Fragment() {
-
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                                  savedInstanceState: Bundle?): View? {
-            val rootView = inflater.inflate(R.layout.fragment_main2, container, false)
-            rootView.section_label.text = getString(R.string.section_format, arguments.getInt(ARG_SECTION_NUMBER))
-            return rootView
-        }
-
-        companion object {
-            /**
-             * The fragment argument representing the section number for this
-             * fragment.
-             */
-            private val ARG_SECTION_NUMBER = "section_number"
-
-            /**
-             * Returns a new instance of this fragment for the given section
-             * number.
-             */
-            fun newInstance(sectionNumber: Int): PlaceholderFragment {
-                val fragment = PlaceholderFragment()
-                val args = Bundle()
-                args.putInt(ARG_SECTION_NUMBER, sectionNumber)
-                fragment.arguments = args
-                return fragment
-            }
-        }
-    }
-
-    fun isDemandOwner(): Boolean {
-        return mUserId == 0;
     }
 }
