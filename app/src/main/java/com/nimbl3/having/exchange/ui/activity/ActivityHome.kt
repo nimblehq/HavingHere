@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.view.Menu
 import android.view.MenuItem
 import com.nimbl3.having.exchange.R
+import com.nimbl3.having.exchange.ui.database.FirebaseDatabaseHelper
 import com.nimbl3.having.exchange.ui.dialog.DialogEnterName
 import com.nimbl3.having.exchange.ui.fragment.FragmentListDemand
 import com.nimbl3.having.exchange.ui.fragment.FragmentListSupply
@@ -32,6 +33,7 @@ class ActivityHome : ActivityBase() {
                     .setAction("Action", null).show()
         }
 
+        toolbar_title.setText("User " + FirebaseDatabaseHelper.getInstance(this).user)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

@@ -21,7 +21,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="empty_demand">No demands on your list, click + to create</string>
+    <string name="empty_demand">No demand on your list, click + to create</string>
     <string name="title_activity_demand_detail">ActivityDemandDetail</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"

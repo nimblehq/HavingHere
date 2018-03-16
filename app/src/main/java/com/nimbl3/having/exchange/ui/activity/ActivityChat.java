@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
@@ -25,13 +26,17 @@ public class ActivityChat extends ActivityBase {
     private EditText mChatEdt;
     private Button mBtnSubmit;
     private FirebaseListAdapter<ChatMessage> adapter;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
         mChatEdt = (EditText) findViewById(R.id.edt_chat);
         mBtnSubmit = (Button) findViewById(R.id.btn_submit);
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
         mBtnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
