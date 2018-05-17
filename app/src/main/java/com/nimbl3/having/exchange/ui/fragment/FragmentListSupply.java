@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.nimbl3.having.exchange.R;
 import com.nimbl3.having.exchange.ui.activity.ActivityChat;
-import com.nimbl3.having.exchange.ui.activity.ActivityDemandDetail;
 import com.nimbl3.having.exchange.ui.intents.DemandListIntents;
 import com.nimbl3.having.exchange.ui.model.Demand;
 import com.nimbl3.having.exchange.ui.viewmodel.ListSupplyViewModel;
