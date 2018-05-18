@@ -17,10 +17,7 @@ import com.nimbl3.having.exchange.R
 import com.nimbl3.having.exchange.ui.intents.ChatIntents
 import com.nimbl3.having.exchange.ui.model.ChatMessage
 import com.nimbl3.having.exchange.ui.viewmodel.ChatViewModel
-import com.nimbl3.having.exchange.ui.viewstate.chat.ChatClearInputTextViewState
-import com.nimbl3.having.exchange.ui.viewstate.chat.ChatEmptyViewState
-import com.nimbl3.having.exchange.ui.viewstate.chat.ChatNewMessageComingViewState
-import com.nimbl3.having.exchange.ui.viewstate.chat.ChatViewState
+import com.nimbl3.having.exchange.ui.viewstate.chat.*
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
@@ -29,8 +26,8 @@ class ActivityChat : ActivityBase() {
 
     lateinit var edtChat: EditText
     lateinit var btnSubmit: Button
-    private var adapter: FirebaseListAdapter<ChatMessage>? = null
-    private var mToolbar: Toolbar? = null
+    var adapter: FirebaseListAdapter<ChatMessage>? = null
+    var mToolbar: Toolbar? = null
     lateinit var mViewModel: ChatViewModel
     lateinit var listOfMessages: ListView
     lateinit var emptyView: View
@@ -46,12 +43,13 @@ class ActivityChat : ActivityBase() {
         btnSubmit = findViewById<View>(R.id.btn_submit) as Button
         mToolbar = findViewById(R.id.toolbar)
         emptyView = findViewById(R.id.empty_view)
-
         setSupportActionBar(mToolbar)
 
-        mViewModel = ViewModelProviders.of(this).get<ChatViewModel>(ChatViewModel::class.java);
         mDisposables = CompositeDisposable()
         newMessageComingSubject = PublishSubject.create()
+
+        mViewModel = ViewModelProviders.of(this).get<ChatViewModel>(ChatViewModel::class.java);
+
         bindToViewModel()
 
         listOfMessages = findViewById<View>(R.id.list_chat) as ListView
@@ -59,44 +57,43 @@ class ActivityChat : ActivityBase() {
         adapter = object : FirebaseListAdapter<ChatMessage>(this, ChatMessage::class.java,
                 R.layout.incoming_message, FirebaseDatabase.getInstance().getReference("chats")) {
             override fun populateView(v: View, model: ChatMessage, position: Int) {
-                updateChatContent(v, model)
-                newMessageComingSubject.onNext(ChatIntents.NewChatComingIntent())
+                newMessageComingSubject.onNext(ChatIntents.NewChatComingIntent(v, model, getUser()))
             }
         }
 
         listOfMessages.adapter = adapter
     }
 
-    private fun updateChatContent(v: View, model: ChatMessage) {
-        // Get references to the views of message.xml
-        val messageTextIncoming = v.findViewById<TextView>(R.id.message_text_incoming)
-        val messageUserIncoming = v.findViewById<TextView>(R.id.message_user_incoming)
-        val messageTimeOutGoing = v.findViewById<TextView>(R.id.message_time)
-        val messageTextOutGoing = v.findViewById<TextView>(R.id.message_text)
-        val messageUserOutGoing = v.findViewById<TextView>(R.id.message_user)
-        val messageTimeIncoming = v.findViewById<TextView>(R.id.message_time_incoming)
-        val incomingLayout = v.findViewById<View>(R.id.layout_incoming)
-        val outgoingLayout = v.findViewById<View>(R.id.layout_sent)
-
-        val time = DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
-                model.messageTime)
-
-        if (model.messageUser.equals("user_name" + getUser())) {
-            // Outgoing
-            messageUserOutGoing.text = model.messageUser
-            messageTextOutGoing.text = model.messageText
-            messageTimeOutGoing.text = time
-            outgoingLayout.visibility = View.VISIBLE
-            incomingLayout.visibility = View.GONE
-        } else {
-            // Incoming
-            messageUserIncoming.text = model.messageUser
-            messageTextIncoming.text = model.messageText
-            incomingLayout.visibility = View.VISIBLE
-            outgoingLayout.visibility = View.GONE
-            messageTimeIncoming.text = time
-        }
-    }
+//    private fun updateChatContent(v: View, model: ChatMessage) {
+//        // Get references to the views of message.xml
+//        val messageTextIncoming = v.findViewById<TextView>(R.id.message_text_incoming)
+//        val messageUserIncoming = v.findViewById<TextView>(R.id.message_user_incoming)
+//        val messageTimeOutGoing = v.findViewById<TextView>(R.id.message_time)
+//        val messageTextOutGoing = v.findViewById<TextView>(R.id.message_text)
+//        val messageUserOutGoing = v.findViewById<TextView>(R.id.message_user)
+//        val messageTimeIncoming = v.findViewById<TextView>(R.id.message_time_incoming)
+//        val incomingLayout = v.findViewById<View>(R.id.layout_incoming)
+//        val outgoingLayout = v.findViewById<View>(R.id.layout_sent)
+//
+//        val time = DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
+//                model.messageTime)
+//
+//        if (model.messageUser.equals("user_name" + getUser())) {
+//            // Outgoing
+//            messageUserOutGoing.text = model.messageUser
+//            messageTextOutGoing.text = model.messageText
+//            messageTimeOutGoing.text = time
+//            outgoingLayout.visibility = View.VISIBLE
+//            incomingLayout.visibility = View.GONE
+//        } else {
+//            // Incoming
+//            messageUserIncoming.text = model.messageUser
+//            messageTextIncoming.text = model.messageText
+//            incomingLayout.visibility = View.VISIBLE
+//            outgoingLayout.visibility = View.GONE
+//            messageTimeIncoming.text = time
+//        }
+//    }
 
     private fun bindToViewModel() {
         // Subscribe to the ViewModel and call render for every emitted state
@@ -113,15 +110,50 @@ class ActivityChat : ActivityBase() {
             is ChatEmptyViewState -> {
                 renderEmptyViewState()
             }
-            is ChatNewMessageComingViewState -> {
-                renderNewMessageComingState()
+            is ChatInComingViewState -> {
+                renderNewMessageComingState(it)
+            }
+            is ChatOutGoingViewState -> {
+                renderNewMessageOutGoing(it)
             }
         }
     }
 
-    private fun renderNewMessageComingState() {
-//        listOfMessages.smoothScrollToPosition(adapter!!.count - 1)
+    private fun renderNewMessageOutGoing(state: ChatOutGoingViewState) {
         emptyView.visibility = View.GONE
+        val messageTimeOutGoing = state.v.findViewById<TextView>(R.id.message_time)
+        val messageTextOutGoing = state.v.findViewById<TextView>(R.id.message_text)
+        val messageUserOutGoing = state.v.findViewById<TextView>(R.id.message_user)
+        val incomingLayout = state.v.findViewById<View>(R.id.layout_incoming)
+        val outgoingLayout = state.v.findViewById<View>(R.id.layout_sent)
+
+        val time = DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
+                state.model.messageTime)
+
+        messageUserOutGoing.text = state.model.messageUser
+        messageTextOutGoing.text = state.model.messageText
+        messageTimeOutGoing.text = time
+        outgoingLayout.visibility = View.VISIBLE
+        incomingLayout.visibility = View.GONE
+    }
+
+    private fun renderNewMessageComingState(state: ChatInComingViewState) {
+        emptyView.visibility = View.GONE
+        emptyView.visibility = View.GONE
+        val messageTimeInComing = state.v.findViewById<TextView>(R.id.message_time_incoming)
+        val messageTextInComing = state.v.findViewById<TextView>(R.id.message_text_incoming)
+        val messageUserInComing = state.v.findViewById<TextView>(R.id.message_user_incoming)
+        val incomingLayout = state.v.findViewById<View>(R.id.layout_incoming)
+        val outgoingLayout = state.v.findViewById<View>(R.id.layout_sent)
+
+        val time = DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
+                state.model.messageTime)
+
+        messageUserInComing.text = state.model.messageUser
+        messageTextInComing.text = state.model.messageText
+        messageTimeInComing.text = time
+        outgoingLayout.visibility = View.GONE
+        incomingLayout.visibility = View.VISIBLE
     }
 
     private fun renderEmptyViewState() {

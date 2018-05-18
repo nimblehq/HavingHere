@@ -5,10 +5,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.nimbl3.having.exchange.ui.intents.ChatIntents
 import com.nimbl3.having.exchange.ui.model.ChatMessage
 import com.nimbl3.having.exchange.ui.mvibase.MviViewModel
-import com.nimbl3.having.exchange.ui.viewstate.chat.ChatClearInputTextViewState
-import com.nimbl3.having.exchange.ui.viewstate.chat.ChatEmptyViewState
-import com.nimbl3.having.exchange.ui.viewstate.chat.ChatNewMessageComingViewState
-import com.nimbl3.having.exchange.ui.viewstate.chat.ChatViewState
+import com.nimbl3.having.exchange.ui.viewstate.chat.*
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
@@ -56,12 +53,20 @@ class ChatViewModel : ViewModel(), MviViewModel<ChatIntents, ChatViewState> {
                     ChatClearInputTextViewState()
                 }
                 is ChatIntents.NewChatComingIntent -> {
-                    ChatNewMessageComingViewState()
+                    getChatTypeViewState(intent)
                 }
                 else -> {
                     ChatEmptyViewState()
                 }
             }
+        }
+    }
+
+    private fun getChatTypeViewState(intent: ChatIntents.NewChatComingIntent): ChatViewState {
+        if (intent.model.messageUser.equals("user_name" + intent.user)) {
+            return ChatOutGoingViewState(intent.view, intent.model)
+        } else {
+            return ChatInComingViewState(intent.view, intent.model)
         }
     }
 
