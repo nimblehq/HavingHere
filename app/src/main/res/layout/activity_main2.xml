@@ -31,7 +31,7 @@
                 android:layout_gravity="center"
                 android:text="Toolbar Title"
                 android:textAllCaps="false"
-                android:textColor="@color/colorAccent"
+                android:textColor="#FFFFFF"
                 android:textSize="34sp" />
 
         </android.support.v7.widget.Toolbar>
@@ -40,6 +40,7 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#FFFFFF"
             app:tabGravity="fill"
             app:tabMode="fixed" />
 

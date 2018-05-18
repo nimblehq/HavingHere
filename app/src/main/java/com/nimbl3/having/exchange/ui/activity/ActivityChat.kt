@@ -3,7 +3,6 @@ package com.nimbl3.having.exchange.ui.activity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.widget.Toolbar
 import android.text.format.DateFormat
 import android.view.View
 import android.widget.Button
@@ -27,7 +26,6 @@ class ActivityChat : ActivityBase() {
     lateinit var edtChat: EditText
     lateinit var btnSubmit: Button
     var adapter: FirebaseListAdapter<ChatMessage>? = null
-    var mToolbar: Toolbar? = null
     lateinit var mViewModel: ChatViewModel
     lateinit var listOfMessages: ListView
     lateinit var emptyView: View
@@ -41,9 +39,7 @@ class ActivityChat : ActivityBase() {
 
         edtChat = findViewById<View>(R.id.edt_chat) as EditText
         btnSubmit = findViewById<View>(R.id.btn_submit) as Button
-        mToolbar = findViewById(R.id.toolbar)
         emptyView = findViewById(R.id.empty_view)
-        setSupportActionBar(mToolbar)
 
         mDisposables = CompositeDisposable()
         newMessageComingSubject = PublishSubject.create()
@@ -63,37 +59,6 @@ class ActivityChat : ActivityBase() {
 
         listOfMessages.adapter = adapter
     }
-
-//    private fun updateChatContent(v: View, model: ChatMessage) {
-//        // Get references to the views of message.xml
-//        val messageTextIncoming = v.findViewById<TextView>(R.id.message_text_incoming)
-//        val messageUserIncoming = v.findViewById<TextView>(R.id.message_user_incoming)
-//        val messageTimeOutGoing = v.findViewById<TextView>(R.id.message_time)
-//        val messageTextOutGoing = v.findViewById<TextView>(R.id.message_text)
-//        val messageUserOutGoing = v.findViewById<TextView>(R.id.message_user)
-//        val messageTimeIncoming = v.findViewById<TextView>(R.id.message_time_incoming)
-//        val incomingLayout = v.findViewById<View>(R.id.layout_incoming)
-//        val outgoingLayout = v.findViewById<View>(R.id.layout_sent)
-//
-//        val time = DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
-//                model.messageTime)
-//
-//        if (model.messageUser.equals("user_name" + getUser())) {
-//            // Outgoing
-//            messageUserOutGoing.text = model.messageUser
-//            messageTextOutGoing.text = model.messageText
-//            messageTimeOutGoing.text = time
-//            outgoingLayout.visibility = View.VISIBLE
-//            incomingLayout.visibility = View.GONE
-//        } else {
-//            // Incoming
-//            messageUserIncoming.text = model.messageUser
-//            messageTextIncoming.text = model.messageText
-//            incomingLayout.visibility = View.VISIBLE
-//            outgoingLayout.visibility = View.GONE
-//            messageTimeIncoming.text = time
-//        }
-//    }
 
     private fun bindToViewModel() {
         // Subscribe to the ViewModel and call render for every emitted state
