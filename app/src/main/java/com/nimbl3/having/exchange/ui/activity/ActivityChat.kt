@@ -19,9 +19,11 @@ import com.nimbl3.having.exchange.ui.model.ChatMessage
 import com.nimbl3.having.exchange.ui.viewmodel.ChatViewModel
 import com.nimbl3.having.exchange.ui.viewstate.chat.ChatClearInputTextViewState
 import com.nimbl3.having.exchange.ui.viewstate.chat.ChatEmptyViewState
+import com.nimbl3.having.exchange.ui.viewstate.chat.ChatNewMessageComingViewState
 import com.nimbl3.having.exchange.ui.viewstate.chat.ChatViewState
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.subjects.PublishSubject
 
 class ActivityChat : ActivityBase() {
 
@@ -32,7 +34,9 @@ class ActivityChat : ActivityBase() {
     lateinit var mViewModel: ChatViewModel
     lateinit var listOfMessages: ListView
     lateinit var emptyView: View
+
     lateinit var mDisposables: CompositeDisposable
+    lateinit var newMessageComingSubject: PublishSubject<ChatIntents.NewChatComingIntent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +51,7 @@ class ActivityChat : ActivityBase() {
 
         mViewModel = ViewModelProviders.of(this).get<ChatViewModel>(ChatViewModel::class.java);
         mDisposables = CompositeDisposable()
+        newMessageComingSubject = PublishSubject.create()
         bindToViewModel()
 
         listOfMessages = findViewById<View>(R.id.list_chat) as ListView
@@ -54,22 +59,27 @@ class ActivityChat : ActivityBase() {
         adapter = object : FirebaseListAdapter<ChatMessage>(this, ChatMessage::class.java,
                 R.layout.message, FirebaseDatabase.getInstance().getReference("chats")) {
             override fun populateView(v: View, model: ChatMessage, position: Int) {
-                // Get references to the views of message.xml
-                val messageText = v.findViewById<TextView>(R.id.message_text)
-                val messageUser = v.findViewById<TextView>(R.id.message_user)
-                val messageTime = v.findViewById<TextView>(R.id.message_time)
-
-                // Set their text
-                messageText.text = model.messageText
-                messageUser.text = model.messageUser
-
-                // Format the date before showing it
-                messageTime.text = DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
-                        model.messageTime)
+                updateChatContent(v, model)
+                newMessageComingSubject.onNext(ChatIntents.NewChatComingIntent())
             }
         }
 
         listOfMessages.adapter = adapter
+    }
+
+    private fun updateChatContent(v: View, model: ChatMessage) {
+        // Get references to the views of message.xml
+        val messageText = v.findViewById<TextView>(R.id.message_text)
+        val messageUser = v.findViewById<TextView>(R.id.message_user)
+        val messageTime = v.findViewById<TextView>(R.id.message_time)
+
+        // Set their text
+        messageText.text = model.messageText
+        messageUser.text = model.messageUser
+
+        // Format the date before showing it
+        messageTime.text = DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
+                model.messageTime)
     }
 
     private fun bindToViewModel() {
@@ -87,7 +97,14 @@ class ActivityChat : ActivityBase() {
             is ChatEmptyViewState -> {
                 renderEmptyViewState()
             }
+            is ChatNewMessageComingViewState -> {
+                renderNewMessageComingState()
+            }
         }
+    }
+
+    private fun renderNewMessageComingState() {
+        listOfMessages.smoothScrollToPosition(adapter!!.count - 1)
     }
 
     private fun renderEmptyViewState() {
@@ -109,7 +126,7 @@ class ActivityChat : ActivityBase() {
     }
 
     private fun intents(): Observable<ChatIntents> {
-        return Observable.merge(initialIntent(), submitChatIntent())
+        return Observable.merge(initialIntent(), submitChatIntent(), newMessageComingSubject)
     }
 
     private fun getUser(): String {

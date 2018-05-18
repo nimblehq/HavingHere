@@ -9,4 +9,8 @@ interface ChatIntents : MviIntent {
 
     class SubmitChatIntent(val message: String, val user: String) : ChatIntents {
     }
+
+    class NewChatComingIntent : ChatIntents {
+
+    }
 }

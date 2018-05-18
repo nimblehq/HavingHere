@@ -7,6 +7,7 @@ import com.nimbl3.having.exchange.ui.model.ChatMessage
 import com.nimbl3.having.exchange.ui.mvibase.MviViewModel
 import com.nimbl3.having.exchange.ui.viewstate.chat.ChatClearInputTextViewState
 import com.nimbl3.having.exchange.ui.viewstate.chat.ChatEmptyViewState
+import com.nimbl3.having.exchange.ui.viewstate.chat.ChatNewMessageComingViewState
 import com.nimbl3.having.exchange.ui.viewstate.chat.ChatViewState
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -40,7 +41,7 @@ class ChatViewModel : ViewModel(), MviViewModel<ChatIntents, ChatViewState> {
         intents.subscribe(intentsSubject)
     }
 
-    override fun states() = mStatesObservable
+    override fun states() = statesObservable
 
     val reducer = { _: ChatViewState, intent: ChatIntents? ->
         if (intent == null) {
@@ -54,7 +55,9 @@ class ChatViewModel : ViewModel(), MviViewModel<ChatIntents, ChatViewState> {
                     executeSubmitChat(intent)
                     ChatClearInputTextViewState()
                 }
-
+                is ChatIntents.NewChatComingIntent -> {
+                    ChatNewMessageComingViewState()
+                }
                 else -> {
                     ChatEmptyViewState()
                 }
@@ -71,5 +74,5 @@ class ChatViewModel : ViewModel(), MviViewModel<ChatIntents, ChatViewState> {
                 .setValue(ChatMessage(message, "user_name$user"))
     }
 
-    val mStatesObservable: Observable<ChatViewState> = compose()
+    val statesObservable: Observable<ChatViewState> = compose()
 }
