@@ -2,7 +2,6 @@ package com.nimbl3.having.exchange.ui.viewmodel
 
 import android.arch.lifecycle.ViewModel
 import com.google.firebase.database.FirebaseDatabase
-import com.nimbl3.having.exchange.ui.actions.ChatAction
 import com.nimbl3.having.exchange.ui.intents.ChatIntents
 import com.nimbl3.having.exchange.ui.model.ChatMessage
 import com.nimbl3.having.exchange.ui.mvibase.MviViewModel
@@ -10,7 +9,6 @@ import com.nimbl3.having.exchange.ui.viewstate.chat.ChatClearInputTextViewState
 import com.nimbl3.having.exchange.ui.viewstate.chat.ChatEmptyViewState
 import com.nimbl3.having.exchange.ui.viewstate.chat.ChatViewState
 import io.reactivex.Observable
-import io.reactivex.ObservableTransformer
 import io.reactivex.subjects.PublishSubject
 
 class ChatViewModel : ViewModel(), MviViewModel<ChatIntents, ChatViewState> {
@@ -37,35 +35,6 @@ class ChatViewModel : ViewModel(), MviViewModel<ChatIntents, ChatViewState> {
                 // match the stream's lifecycle to the ViewModel's one.
                 .autoConnect(0)
     }
-
-    /**
-     * Translate an [MviIntent] to an [MviAction].
-     * Used to decouple the UI and the business logic to allow easy testings and reusability.
-     */
-    private fun actionFromIntent(intent: ChatIntents): ChatAction {
-        return when (intent) {
-            is ChatIntents.SubmitChatIntent -> {
-                ChatAction.SubmitChat("")
-            }
-            else -> {
-                ChatAction.Initial("")
-            }
-        }
-    }
-
-    /**
-     * take only the first ever InitialIntent and all intents of other types
-     * to avoid reloading data on config changes
-     */
-    private val intentFilter: ObservableTransformer<ChatIntents, ChatIntents>
-        get() = ObservableTransformer { intents ->
-            intents.publish { shared ->
-                Observable.merge<ChatIntents>(
-                        shared.ofType(ChatIntents.InitialIntents::class.java).take(1),
-                        shared.filter({ intent -> intent !is ChatIntents.SubmitChatIntent })
-                )
-            }
-        }
 
     override fun processIntents(intents: Observable<ChatIntents>) {
         intents.subscribe(intentsSubject)
