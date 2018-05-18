@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/layout_incoming"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/message_text_incoming"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/margin_chat_avatar"
+            android:background="@drawable/bg_chat_white"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:paddingStart="30dp"
+            android:paddingLeft="30dp"
+            android:text="Message textfsfsgfgdfgdgggfdgggggdggdgdggdgdgdgdfgffdf"
+            android:textColor="#000000"
+            android:textSize="@dimen/text_size_medium" />
+
+        <TextView
+            android:id="@+id/message_user_incoming"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/message_text_incoming"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/margin_chat_avatar"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:text="Message user" />
+
+        <TextView
+            android:id="@+id/message_time_incoming"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="Message time"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/layout_sent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/message_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/margin_chat_avatar"
+            android:background="@drawable/bg_chat_orange"
+            android:gravity="right"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:text="Message text"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/text_size_medium" />
+        <!--android:background="@drawable/ic_msg_sent"-->
+        <!--android:backgroundTint="#EBEEF3"-->
+
+        <TextView
+            android:id="@+id/message_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/message_text"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/margin_chat_avatar"
+            android:text="Message user" />
+
+        <TextView
+            android:id="@+id/message_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/message_user"
+            android:layout_alignParentRight="true"
+            android:text="Message time"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
