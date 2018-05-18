@@ -50,7 +50,6 @@ public class FragmentListSupply extends FragmentBase {
         });
 
         mViewModel = ViewModelProviders.of(this).get(ListSupplyViewModel.class);
-        mDisposables = new CompositeDisposable();
         bind();
         return view;
     }
