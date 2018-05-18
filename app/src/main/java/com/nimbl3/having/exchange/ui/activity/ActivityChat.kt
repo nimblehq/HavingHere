@@ -57,7 +57,7 @@ class ActivityChat : ActivityBase() {
         listOfMessages = findViewById<View>(R.id.list_chat) as ListView
 
         adapter = object : FirebaseListAdapter<ChatMessage>(this, ChatMessage::class.java,
-                R.layout.message, FirebaseDatabase.getInstance().getReference("chats")) {
+                R.layout.incoming_message, FirebaseDatabase.getInstance().getReference("chats")) {
             override fun populateView(v: View, model: ChatMessage, position: Int) {
                 updateChatContent(v, model)
                 newMessageComingSubject.onNext(ChatIntents.NewChatComingIntent())
@@ -69,17 +69,33 @@ class ActivityChat : ActivityBase() {
 
     private fun updateChatContent(v: View, model: ChatMessage) {
         // Get references to the views of message.xml
-        val messageText = v.findViewById<TextView>(R.id.message_text)
-        val messageUser = v.findViewById<TextView>(R.id.message_user)
-        val messageTime = v.findViewById<TextView>(R.id.message_time)
+        val messageTextIncoming = v.findViewById<TextView>(R.id.message_text_incoming)
+        val messageUserIncoming = v.findViewById<TextView>(R.id.message_user_incoming)
+        val messageTimeOutGoing = v.findViewById<TextView>(R.id.message_time)
+        val messageTextOutGoing = v.findViewById<TextView>(R.id.message_text)
+        val messageUserOutGoing = v.findViewById<TextView>(R.id.message_user)
+        val messageTimeIncoming = v.findViewById<TextView>(R.id.message_time_incoming)
+        val incomingLayout = v.findViewById<View>(R.id.layout_incoming)
+        val outgoingLayout = v.findViewById<View>(R.id.layout_sent)
 
-        // Set their text
-        messageText.text = model.messageText
-        messageUser.text = model.messageUser
-
-        // Format the date before showing it
-        messageTime.text = DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
+        val time = DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
                 model.messageTime)
+
+        if (model.messageUser.equals("user_name" + getUser())) {
+            // Outgoing
+            messageUserOutGoing.text = model.messageUser
+            messageTextOutGoing.text = model.messageText
+            messageTimeOutGoing.text = time
+            outgoingLayout.visibility = View.VISIBLE
+            incomingLayout.visibility = View.GONE
+        } else {
+            // Incoming
+            messageUserIncoming.text = model.messageUser
+            messageTextIncoming.text = model.messageText
+            incomingLayout.visibility = View.VISIBLE
+            outgoingLayout.visibility = View.GONE
+            messageTimeIncoming.text = time
+        }
     }
 
     private fun bindToViewModel() {
@@ -104,7 +120,8 @@ class ActivityChat : ActivityBase() {
     }
 
     private fun renderNewMessageComingState() {
-        listOfMessages.smoothScrollToPosition(adapter!!.count - 1)
+//        listOfMessages.smoothScrollToPosition(adapter!!.count - 1)
+        emptyView.visibility = View.GONE
     }
 
     private fun renderEmptyViewState() {
